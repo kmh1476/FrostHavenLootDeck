@@ -4,53 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>프로스트헤이븐: 노획 대시보드</title>
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/loot/fh-loot-bw-icon.png">
     <style>
         :root { --bg-solid: #020617; --bg-overlay: rgba(2, 6, 23, 0.65); --panel-bg: rgba(15, 23, 42, 0.98); --accent: #38bdf8; --text: #f1f5f9; --border: rgba(56, 189, 248, 0.3); }
-        
         body { font-family: 'Pretendard', sans-serif; background: var(--bg-solid); color: var(--text); margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; background-image: linear-gradient(var(--bg-overlay), var(--bg-overlay)), url('https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/game-box/fh-game-box-bottom-longside.png'); background-size: cover; background-position: center; background-attachment: fixed; }
-        
         #snow-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 0; }
         .main-wrapper { width: 100%; max-width: 1200px; display: flex; flex-direction: column; gap: 20px; z-index: 1; }
         header { text-align: center; padding: 10px 0; }
-        .logo { width: 400px; filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.3)); }
+        .logo { width: 400px; opacity: 0.9; }
 
-        /* 세팅 화면 */
+        /* 세팅 구역 - 그룹명 없이 여백으로만 구분 */
         #setup-area { background: var(--panel-bg); padding: 25px; border-radius: 30px; border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.8); }
-        .setup-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 25px; }
-        .input-group { background: rgba(0,0,0,0.5); padding: 12px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,0.05); }
-        .input-row { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+        .setup-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-bottom: 25px; } /* 줄 사이 간격 유지 */
+        .input-group { background: rgba(0,0,0,0.5); padding: 12px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,0.05); }
         
-        /* 플레이 화면 레이아웃 */
         #play-area { display: none; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 1000px) { #play-area { grid-template-columns: 1.1fr 1.4fr; } }
 
-        .display-panel { background: var(--panel-bg); padding: 30px 15px; border-radius: 30px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.9); }
+        .display-panel { background: var(--panel-bg); padding: 30px 15px; border-radius: 30px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 20px; }
         .loot-card { width: 220px; height: 306px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,1); background: #0f172a; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
         .loot-card img { width: 100%; height: 100%; object-fit: contain; }
 
-        /* 로그 패널 모바일 최적화 */
+        /* 캐릭터 로그 영역 */
         .log-panel { display: flex; flex-direction: column; gap: 15px; }
-        .player-box { position: relative; overflow: hidden; padding: 20px 15px 20px 90px; background: rgba(15, 23, 42, 0.95); border-radius: 25px; border: 1px solid var(--border); min-height: 100px; display: flex; flex-direction: column; justify-content: center; }
-        .hero-portrait { position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 110px; height: 110px; object-fit: cover; opacity: 0.7; mask-image: linear-gradient(to right, black 40%, transparent 95%); -webkit-mask-image: linear-gradient(to right, black 40%, transparent 95%); }
-        .name-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; z-index: 2; }
+        .player-box { position: relative; overflow: hidden; padding: 20px 15px 20px 100px; background: rgba(15, 23, 42, 0.95); border-radius: 25px; border: 1px solid var(--border); min-height: 110px; display: flex; flex-direction: column; justify-content: center; }
+        .hero-portrait { position: absolute; left: -15px; top: 50%; transform: translateY(-50%); width: 120px; height: 120px; object-fit: cover; opacity: 0.6; mask-image: linear-gradient(to right, black 30%, transparent 90%); -webkit-mask-image: linear-gradient(to right, black 30%, transparent 90%); }
+        .name-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; z-index: 2; }
+        .hero-mark-mini { width: 32px; height: 32px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); }
+        .hero-mark-mini img { width: 24px; height: 24px; }
         .name-tag { font-weight: 900; color: white; font-size: 22px; text-shadow: 0 2px 4px black; }
         .summary-container { display: flex; flex-wrap: wrap; gap: 8px; z-index: 2; }
+        .log-item { background: white; color: #020617; padding: 5px 10px; border-radius: 10px; display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 900; }
+        .log-icon { width: 18px; height: 18px; }
 
-        .icon-wrapper { background: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+        .icon-wrapper { background: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .setup-icon { width: 22px; height: 22px; }
-        
-        /* 버튼 및 입력창 모바일 최적화 */
-        input[type="number"] { width: 50px; background: #020617; border: 2px solid var(--accent); color: white; border-radius: 10px; padding: 8px; text-align: center; font-weight: 900; font-size: 18px; }
+        input[type="number"] { width: 55px; background: #020617; border: 2px solid var(--accent); color: white; border-radius: 10px; padding: 6px; text-align: center; font-weight: 900; font-size: 18px; }
         input[type="checkbox"] { width: 28px; height: 28px; accent-color: var(--accent); }
-        
         .btn { width: 100%; padding: 18px; border: none; border-radius: 20px; font-weight: 800; cursor: pointer; font-size: 20px; transition: 0.2s; }
         .btn-draw { background: linear-gradient(135deg, #0ea5e9, #0284c7); color: white; box-shadow: 0 6px 0 #0369a1; }
+        .btn-name { background: #1e293b; color: white; font-size: 16px; padding: 15px 5px; border-radius: 15px; box-shadow: 0 5px 0 #0f172a; font-weight: 900; }
         .assign-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; visibility: hidden; margin-top: 15px; }
-        .btn-name { background: #1e293b; color: white; font-size: 17px; padding: 15px 5px; border-radius: 15px; box-shadow: 0 5px 0 #0f172a; font-weight: 900; }
-        
-        .log-item { background: white; color: #020617; padding: 6px 12px; border-radius: 10px; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 900; }
-        .log-icon { width: 18px; height: 18px; }
         .btn-restart { background: #0f172a; color: #64748b; border: 1px solid #1e293b; font-size: 14px; font-weight: 800; padding: 12px 20px; border-radius: 14px; align-self: flex-end; }
     </style>
 </head>
@@ -58,32 +51,63 @@
 <canvas id="snow-canvas"></canvas>
 <div class="main-wrapper">
     <header><img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/logos/fh-frosthaven-logo.png" class="logo"></header>
+    
     <div id="setup-area">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;">
             <span style="font-size:20px; font-weight:900; color:var(--accent);">원정대 노획 세팅</span>
-            <button onclick="resetAllToZero()" style="background:#1e293b; color:#94a3b8; border:none; padding:8px 15px; border-radius:10px; font-size:13px; font-weight:800;">리셋</button>
+            <button onclick="resetAllToZero()" style="background:#1e293b; color:#94a3b8; border:none; padding:8px 15px; border-radius:10px; font-size:13px; font-weight:800;">전체 리셋</button>
         </div>
-        <div class="setup-grid" id="setup-inputs"></div>
-        <button class="btn btn-draw" onclick="startGame()">게임 시작 (START)</button>
+
+        <div class="setup-grid" id="grid-basic"></div>
+        <div class="setup-grid" id="grid-herbs"></div>
+        <div class="setup-grid" id="grid-special"></div>
+        <div class="setup-grid" id="grid-scenario"></div>
+
+        <button class="btn btn-draw" style="margin-top:10px;" onclick="startGame()">게임 시작 (START)</button>
     </div>
+    
     <div id="play-area">
-        <div class="display-panel"><div class="loot-card" id="current-card"></div><p id="deck-info" style="font-weight:900; color:#64748b; margin:0; font-size:20px;">남은 카드: 0</p><div style="width:100%; max-width:400px;"><button class="btn btn-draw" id="draw-btn" onclick="drawCard()">카드 드로우</button><div class="assign-grid" id="assign-area"><button class="btn btn-name" onclick="assignTo('김명흠')">명흠</button><button class="btn btn-name" onclick="assignTo('배현우')">현우</button><button class="btn btn-name" onclick="assignTo('정태영')">태영</button></div></div></div>
+        <div class="display-panel">
+            <div class="loot-card" id="current-card"></div>
+            <p id="deck-info" style="font-weight:900; color:#64748b; margin:0; font-size:18px;">남은 카드: 0</p>
+            <div style="width:100%; max-width:400px;">
+                <button class="btn btn-draw" id="draw-btn" onclick="drawCard()">카드 드로우</button>
+                <div class="assign-grid" id="assign-area">
+                    <button class="btn btn-name" onclick="assignTo('김명흠')">명흠</button>
+                    <button class="btn btn-name" onclick="assignTo('배현우')">현우</button>
+                    <button class="btn btn-name" onclick="assignTo('정태영')">태영</button>
+                </div>
+            </div>
+        </div>
         <div class="log-panel">
-            <div class="player-box"><img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/characters/images/fh-geminate.png" class="hero-portrait"><div class="name-row"><span class="name-tag">김명흠</span></div><div id="log-김명흠" class="summary-container"></div></div>
-            <div class="player-box"><img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/characters/images/fh-banner-spear.png" class="hero-portrait"><div class="name-row"><span class="name-tag">배현우</span></div><div id="log-배현우" class="summary-container"></div></div>
-            <div class="player-box"><img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/characters/images/fh-frozen-fist.png" class="hero-portrait"><div class="name-row"><span class="name-tag">정태영</span></div><div id="log-정태영" class="summary-container"></div></div>
+            <div class="player-box">
+                <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/characters/images/fh-geminate.png" class="hero-portrait">
+                <div class="name-row"><div class="hero-mark-mini"><img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-geminate-bw-icon.png"></div><span class="name-tag">김명흠</span></div>
+                <div id="log-김명흠" class="summary-container"></div>
+            </div>
+            <div class="player-box">
+                <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/characters/images/fh-banner-spear.png" class="hero-portrait">
+                <div class="name-row"><div class="hero-mark-mini"><img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-banner-spear-bw-icon.png"></div><span class="name-tag">배현우</span></div>
+                <div id="log-배현우" class="summary-container"></div>
+            </div>
+            <div class="player-box">
+                <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/characters/images/fh-frozen-fist.png" class="hero-portrait">
+                <div class="name-row"><div class="hero-mark-mini"><img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-frozen-fist-bw-icon.png"></div><span class="name-tag">정태영</span></div>
+                <div id="log-정태영" class="summary-container"></div>
+            </div>
             <button class="btn btn-restart" onclick="location.reload()">처음으로</button>
         </div>
     </div>
 </div>
+
 <script>
-    /* ... (기존 JavaScript 로직 동일하지만 initInputs만 모바일 최적화 레이아웃으로 변경) ... */
+    /* JS 로직은 동일합니다 */
     const canvas = document.getElementById('snow-canvas'); const ctx = canvas.getContext('2d'); let flakes = [];
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.onresize = resize; resize();
-    function createFlakes() { flakes = []; for(let i=0; i<150; i++) flakes.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*3+1, d: Math.random()*2+1, a: Math.random()*0.5+0.2 }); }
+    function createFlakes() { flakes = []; for(let i=0; i<100; i++) flakes.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*2+1, d: Math.random()*1+0.5, a: Math.random()*0.4+0.2 }); }
     function drawFlakes() { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.beginPath(); flakes.forEach(f => { ctx.fillStyle = `rgba(255, 255, 255, ${f.a})`; ctx.moveTo(f.x, f.y); ctx.arc(f.x, f.y, f.r, 0, Math.PI*2, true); }); ctx.fill(); moveFlakes(); }
-    function moveFlakes() { flakes.forEach(f => { f.y += f.d; f.x += Math.sin(f.y/80)*2 + 1; if(f.y > canvas.height) { f.y = -20; f.x = Math.random()*canvas.width; } if(f.x > canvas.width) f.x = 0; }); }
+    function moveFlakes() { flakes.forEach(f => { f.y += f.d; f.x += Math.sin(f.y/80); if(f.y > canvas.height) f.y = -20; }); }
     setInterval(drawFlakes, 30); createFlakes();
 
     let masterDeck = []; let currentResult = null;
@@ -93,28 +117,29 @@
     const backImg = baseUrl + "fh-loot-deck-back.png";
 
     const itemConfig = {
-        "money": { label: "돈", icon: iconBase + "fh-money-bw-icon.png", sub: [{p:"fh-one-coin", s:1361, e:1372, v:1, max:12}, {p:"fh-two-coins", s:1373, e:1378, v:2, max:6}, {p:"fh-three-coins", s:1379, e:1380, v:3, max:2}], max: 20 }, 
-        "lumber": { label: "나무", icon: iconBase + "fh-lumber-bw-icon.png", p:"fh-lumber", s:1401, e:1408, max: 8, x2: 3 },
-        "metal": { label: "금속", icon: iconBase + "fh-metal-bw-icon.png", p:"fh-metal", s:1409, e:1416, max: 8, x2: 3 },
-        "hide": { label: "가죽", icon: iconBase + "fh-hide-bw-icon.png", p:"fh-hide", s:1393, e:1400, max: 8, x2: 3 },
-        "h1": { label: "화살덩굴", icon: iconBase + "fh-arrowvine-bw-icon.png", p:"fh-arrowvine", s:1381, e:1382, max: 2 },
-        "h2": { label: "도끼견과", icon: iconBase + "fh-axenut-bw-icon.png", p:"fh-axenut", s:1383, e:1384, max: 2 },
-        "h3": { label: "시체버섯", icon: iconBase + "fh-corpsecap-bw-icon.png", p:"fh-corpsecap", s:1385, e:1386, max: 2 },
-        "h4": { label: "화염열매", icon: iconBase + "fh-flamefruit-bw-icon.png", p:"fh-flamefruit", s:1387, e:1388, max: 2 },
-        "h5": { label: "바위뿌리", icon: iconBase + "fh-rockroot-bw-icon.png", p:"fh-rockroot", s:1389, e:1390, max: 2 },
-        "h6": { label: "눈엉겅퀴", icon: iconBase + "fh-snowthistle-bw-icon.png", p:"fh-snowthistle", s:1391, e:1392, max: 2 },
-        "item": { label: "아이템", icon: iconBase + "fh-treasure-chest-item-bw-icon.png", p:"fh-random-item", s:1417, e:1417, max: 1 },
-        "sc1": { label: "? (1)", icon: iconBase + "fh-money-bw-icon.png", img: "fh-scenario-coin-1418.png", isCheck: true },
-        "sc2": { label: "? (2)", icon: iconBase + "fh-money-bw-icon.png", img: "fh-scenario-coin-1419.png", isCheck: true }
+        "money": { group: "basic", label: "돈", icon: iconBase + "fh-money-bw-icon.png", sub: [{p:"fh-one-coin", s:1361, e:1372, v:1, max:12}, {p:"fh-two-coins", s:1373, e:1378, v:2, max:6}, {p:"fh-three-coins", s:1379, e:1380, v:3, max:2}], max: 20 }, 
+        "lumber": { group: "basic", label: "나무", icon: iconBase + "fh-lumber-bw-icon.png", p:"fh-lumber", s:1401, e:1408, max: 8, x2: 3 },
+        "metal": { group: "basic", label: "금속", icon: iconBase + "fh-metal-bw-icon.png", p:"fh-metal", s:1409, e:1416, max: 8, x2: 3 },
+        "hide": { group: "basic", label: "가죽", icon: iconBase + "fh-hide-bw-icon.png", p:"fh-hide", s:1393, e:1400, max: 8, x2: 3 },
+        "h1": { group: "herbs", label: "화살덩굴", icon: iconBase + "fh-arrowvine-bw-icon.png", p:"fh-arrowvine", s:1381, e:1382, max: 2 },
+        "h2": { group: "herbs", label: "도끼견과", icon: iconBase + "fh-axenut-bw-icon.png", p:"fh-axenut", s:1383, e:1384, max: 2 },
+        "h3": { group: "herbs", label: "시체버섯", icon: iconBase + "fh-corpsecap-bw-icon.png", p:"fh-corpsecap", s:1385, e:1386, max: 2 },
+        "h4": { group: "herbs", label: "화염열매", icon: iconBase + "fh-flamefruit-bw-icon.png", p:"fh-flamefruit", s:1387, e:1388, max: 2 },
+        "h5": { group: "herbs", label: "바위뿌리", icon: iconBase + "fh-rockroot-bw-icon.png", p:"fh-rockroot", s:1389, e:1390, max: 2 },
+        "h6": { group: "herbs", label: "눈엉겅퀴", icon: iconBase + "fh-snowthistle-bw-icon.png", p:"fh-snowthistle", s:1391, e:1392, max: 2 },
+        "item": { group: "special", label: "아이템", icon: iconBase + "fh-treasure-chest-item-bw-icon.png", p:"fh-random-item", s:1417, e:1417, max: 1 },
+        "sc1": { group: "scenario", label: "? (1)", icon: iconBase + "fh-money-bw-icon.png", img: "fh-scenario-coin-1418.png", isCheck: true },
+        "sc2": { group: "scenario", label: "? (2)", icon: iconBase + "fh-money-bw-icon.png", img: "fh-scenario-coin-1419.png", isCheck: true }
     };
 
     function initInputs() {
-        const setupInputs = document.getElementById('setup-inputs'); setupInputs.innerHTML = "";
+        ["grid-basic", "grid-herbs", "grid-special", "grid-scenario"].forEach(id => document.getElementById(id).innerHTML = "");
         Object.keys(itemConfig).forEach(id => {
             const conf = itemConfig[id];
+            const targetGrid = document.getElementById(`grid-${conf.group}`);
             const iconHtml = conf.isCheck ? `<div class="icon-wrapper" style="background:transparent; border:1px dashed rgba(255,255,255,0.1);"></div>` : `<div class="icon-wrapper"><img src="${conf.icon}" class="setup-icon"></div>`;
             let inputHtml = conf.isCheck ? `<input type="checkbox" id="in-${id}">` : `<input type="number" id="in-${id}" value="0" min="0" max="${conf.max}" oninput="if(this.value > ${conf.max}) this.value = ${conf.max}; if(this.value < 0) this.value = 0;">`;
-            setupInputs.innerHTML += `<div class="input-group">${iconHtml}<span style="font-weight:700; font-size:15px; color:#94a3b8;">${conf.label}</span>${inputHtml}</div>`;
+            targetGrid.innerHTML += `<div class="input-group">${iconHtml}<span style="font-weight:700; font-size:14px; color:#94a3b8; text-align:center;">${conf.label}</span>${inputHtml}</div>`;
         });
     }
 
