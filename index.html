@@ -380,4 +380,156 @@
         showCard(baseUrl + currentResult.img);
         document.getElementById('assign-area').style.visibility='visible'; 
         document.getElementById('draw-btn').disabled=true; 
-        updateUI
+        updateUI();
+    }
+
+    function assignTo(n) {
+        if(!currentResult) return;
+        logs[n].push({ ...currentResult, uid: cardIdCounter++ });
+        renderLogs(n);
+        finishAssign();
+    }
+
+    function assignToMonster() {
+        if(!currentResult) return;
+        finishAssign();
+    }
+
+    function finishAssign() {
+        showCard(backImg); 
+        document.getElementById('assign-area').style.visibility='hidden'; 
+        document.getElementById('draw-btn').disabled=false;
+        currentResult = null; 
+        updateUI();
+    }
+
+    function renderLogs(n) {
+        const cont = document.getElementById(`log-${n}`); 
+        if(!cont) return; // 보호 처리
+        cont.innerHTML = "";
+        
+        let counts = {};
+        (logs[n] || []).forEach(card => {
+            counts[card.type] = (counts[card.type] || 0) + card.amount;
+        });
+
+        Object.entries(counts).forEach(([t, c]) => { 
+            cont.innerHTML += `<div class="log-item" onclick="openDiscardModal('${n}', '${t}')"><img src="${itemConfig[t].icon}" class="log-icon"> x${c}</div>`; 
+        });
+    }
+
+    function openDiscardModal(playerName, type) {
+        const modal = document.getElementById('discard-modal');
+        const list = document.getElementById('discard-list');
+        document.getElementById('discard-title').innerText = `${playerName}님의 ${itemConfig[type].label} 확인/버리기`;
+        list.innerHTML = "";
+        
+        const cards = (logs[playerName] || []).filter(c => c.type === type);
+        if(cards.length === 0) return;
+
+        cards.forEach(card => {
+            list.innerHTML += `
+                <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.05); padding:10px 15px; border-radius:15px; border:1px solid rgba(255,255,255,0.1);">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <img src="${baseUrl + card.img}" style="height:60px; border-radius:6px; box-shadow:0 4px 6px rgba(0,0,0,0.5);">
+                        <div style="text-align:left;">
+                            <span style="font-weight:900; color:white; font-size:16px;">${itemConfig[type].label}</span>
+                            <div style="font-size:12px; color:#94a3b8;">${card.amount}개 짜리 카드</div>
+                        </div>
+                    </div>
+                    <button class="btn" style="width:auto; padding:10px 15px; background:var(--fail); font-size:14px; border-radius:10px;" onclick="removeCard('${playerName}', ${card.uid})">버리기</button>
+                </div>
+            `;
+        });
+        modal.style.display = 'flex';
+    }
+
+    function removeCard(playerName, uid) {
+        if(confirm('해당 카드를 정말로 폐기하시겠습니까?')) {
+            logs[playerName] = logs[playerName].filter(c => c.uid !== uid);
+            closeDiscardModal();
+            renderLogs(playerName);
+            if(document.getElementById('settlement-modal').style.display === 'flex') {
+                openSettlement();
+            }
+        }
+    }
+
+    function closeDiscardModal() { document.getElementById('discard-modal').style.display = 'none'; }
+    function updateUI() { document.getElementById('deck-info').innerText = `남은 카드: ${masterDeck.length}`; }
+
+    function openSettlement() {
+        document.getElementById('settlement-modal').style.display = 'flex';
+        const list = document.getElementById('modal-loot-list'); list.innerHTML = "";
+        
+        party.forEach(p => {
+            let counts = {};
+            (logs[p.name] || []).forEach(card => {
+                counts[card.type] = (counts[card.type] || 0) + card.amount;
+            });
+
+            const playerItems = Object.entries(counts).map(([t, c]) => `<div class="log-item" onclick="openDiscardModal('${p.name}', '${t}')"><img src="${itemConfig[t].icon}" class="log-icon"> x${c}</div>`).join("");
+            
+            list.innerHTML += `<div style="display:flex; align-items:center; gap:15px; background:rgba(255,255,255,0.05); padding:12px; border-radius:18px; border:1px solid rgba(255,255,255,0.1);">
+                <div class="class-icon-circle"><img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${p.cls}-icon.png" onerror="this.src='https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${p.cls}-bw-icon.png'"></div>
+                <div style="flex:1;">
+                    <div style="font-weight:900; margin-bottom:5px; font-size:15px; color:white;">${p.name}</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:6px;">${playerItems || '<span style="color:#64748b; font-size:12px;">획득 없음</span>'}</div>
+                </div>
+            </div>`;
+        });
+        refreshGuide();
+    }
+
+    function closeModal() { document.getElementById('settlement-modal').style.display = 'none'; }
+    
+    function setMode(m) {
+        mode = m;
+        document.getElementById('tab-success').style.background = (m==='success') ? 'var(--success)' : '#1e293b';
+        document.getElementById('tab-fail').style.background = (m==='fail') ? 'var(--fail)' : '#1e293b';
+        refreshGuide();
+    }
+
+    let mode = 'success';
+    function refreshGuide() {
+        const lv = document.getElementById('final-lv').value;
+        const rv = rewards[lv];
+        const area = document.getElementById('guide-area');
+        let commonHtml = `
+            <div style="border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:15px; padding-bottom:5px;">
+                <h4 style="margin:0; font-size:15px; color:white;">1. 공통 단계 (모두 수행)</h4>
+            </div>
+            <div class="step-item"><span class="step-tag">카드/아이템 회수</span> 모든 능력/아이템 카드 회수</div>
+            <div class="step-item"><span class="step-tag">상태 초기화</span> 체력 재설정 및 모든 상태이상 제거</div>
+            <div class="step-item"><span class="step-tag">공격 보정 덱 정리</span> <span class="highlight">축복, 저주, 마이너스 아이템</span> 제거</div>
+            <div class="step-item"><span class="step-tag">경험치(XP) 계산</span> 획득 XP ${mode==='success' ? '+ <span class="highlight">보너스 '+rv.xp+' XP</span>' : '(성공 보너스 없음)'}</div>
+            <div class="step-item"><span class="step-tag">금화 계산</span> 코인 수 × <span class="highlight">${rv.g} </span> 기록</div>
+        `;
+
+        if(mode === 'success') {
+            area.innerHTML = commonHtml + `
+                <div style="border-bottom:1px solid rgba(255,255,255,0.1); margin:15px 0; padding-bottom:5px;">
+                    <h4 style="margin:0; font-size:15px; color:var(--success);">2. 시나리오 성공 시 보상</h4>
+                </div>
+                <div class="step-item">① <span class="highlight">전리품 자원 획득</span>: 자원(재료, 약초) 시트 기록</div>
+                <div class="step-item">② 전투 목표: 달성 시 체크표시 획득 (3개당 특혜 1개)</div>
+                <div class="step-item">③ 숙련도: 달성 시 <span class="highlight">특혜 마크 1개</span> 획득</div>
+                <div class="step-item">④ 결말 읽기 및 시나리오 보상 수령</div>
+                <div class="step-item">⑤ <span class="highlight">영감 획득</span>: 캠페인 시트 영감 1점 기록 (${party.length}인 기준)</div>
+                <div class="step-item">⑥ 지도 업데이트 (스티커 완료 체크)</div>
+                <div class="step-item">⑦ 초소 단계 진행 또는 연결 시나리오로 이동</div>
+            `;
+        } else {
+            area.innerHTML = commonHtml + `
+                <div style="border-bottom:1px solid rgba(255,255,255,0.1); margin:15px 0; padding-bottom:5px;">
+                    <h4 style="margin:0; font-size:15px; color:var(--fail);">2. 실패 시 선택</h4>
+                </div>
+                <div class="step-item"><b>옵션 A:</b> 자원 유지하며 마을로 복귀 (초소 단계 진행)</div>
+                <div class="step-item"><b>옵션 B:</b> <span style="color:#ef4444;">이번 판 자원 모두 상실</span> 후 즉시 재도전</div>
+            `;
+        }
+    }
+    init();
+</script>
+</body>
+</html>
