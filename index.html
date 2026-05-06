@@ -10,7 +10,6 @@
         #snow-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 0; }
         .main-wrapper { width: 100%; max-width: 1200px; display: flex; flex-direction: column; gap: 20px; z-index: 1; }
         
-        /* 세팅 영역 */
         #setup-area { background: var(--panel-bg); padding: 25px; border-radius: 25px; border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
         .setup-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-bottom: 20px; }
         .input-group { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,0.05); }
@@ -18,14 +17,12 @@
         .setup-icon { width: 24px; height: 24px; }
         input[type="number"] { width: 60px; background: #020617; border: 2px solid var(--accent); color: white; border-radius: 8px; padding: 5px; text-align: center; font-weight: 800; font-size: 16px; }
         
-        /* 플레이 영역 */
         #play-area { display: none; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 1000px) { #play-area { grid-template-columns: 1.1fr 1.4fr; } }
         .display-panel { background: var(--panel-bg); padding: 25px 15px; border-radius: 30px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .loot-card { width: 220px; height: 306px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,1); background: #0f172a; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
         .loot-card img { width: 100%; height: 100%; object-fit: contain; }
 
-        /* 캐릭터 박스 & 아이콘 복구 */
         .player-box { position: relative; overflow: hidden; padding: 15px 15px 15px 100px; background: rgba(15, 23, 42, 0.95); border-radius: 20px; border: 1px solid var(--border); min-height: 110px; display: flex; flex-direction: column; justify-content: center; margin-bottom: 12px; }
         .hero-portrait { position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 120px; height: 120px; object-fit: cover; opacity: 0.4; mask-image: linear-gradient(to right, black 30%, transparent 90%); -webkit-mask-image: linear-gradient(to right, black 30%, transparent 90%); z-index: 0; }
         .player-header { display: flex; align-items: center; gap: 10px; z-index: 2; margin-bottom: 5px; }
@@ -33,26 +30,25 @@
         .class-icon-circle img { width: 26px; height: 26px; }
         .name-tag { font-weight: 900; color: white; font-size: 22px; text-shadow: 0 2px 4px black; }
         
-        .log-item { background: white; color: #020617; padding: 4px 10px; border-radius: 10px; display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 900; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .log-item { background: white; color: #020617; padding: 4px 10px; border-radius: 10px; display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 900; box-shadow: 0 2px 4px rgba(0,0,0,0.2); cursor: pointer; transition: transform 0.1s; }
+        .log-item:hover { transform: scale(1.05); background: #fee2e2; }
         .log-icon { width: 18px; height: 18px; }
         .summary-container { display: flex; flex-wrap: wrap; gap: 6px; z-index: 2; }
 
         .btn { width: 100%; padding: 16px; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; font-size: 18px; transition: 0.2s; }
         .btn-draw { background: linear-gradient(135deg, #0ea5e9, #0284c7); color: white; box-shadow: 0 4px 0 #0369a1; }
+        .btn-monster { background: linear-gradient(135deg, #64748b, #475569); color: white; box-shadow: 0 4px 0 #334155; margin-top: 8px; font-size: 14px; padding: 10px; }
         .btn-finish { background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; box-shadow: 0 4px 0 #3730a3; }
         .assign-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; visibility: hidden; margin-top: 10px; }
         .btn-name { background: #1e293b; color: white; font-size: 15px; padding: 12px 5px; border-radius: 12px; box-shadow: 0 4px 0 #0f172a; font-weight: 900; }
 
-        /* 정산 모달 및 개선된 X 버튼 */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 100; justify-content: center; align-items: center; padding: 10px; }
         .modal-content { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 30px; width: 100%; max-width: 950px; max-height: 95vh; overflow-y: auto; padding: 30px; position: relative; }
-        
         .close-x { position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #94a3b8; cursor: pointer; transition: 0.2s; z-index: 110; border: 1px solid rgba(255,255,255,0.1); }
         .close-x:hover { background: var(--fail); color: white; transform: rotate(90deg); }
 
         .settlement-grid { display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 10px; }
         @media (min-width: 850px) { .settlement-grid { grid-template-columns: 1fr 1.3fr; } }
-        
         .guide-box { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.05); }
         .step-tag { display: inline-block; background: var(--accent); color: #020617; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 900; margin-bottom: 5px; }
         .step-item { margin-bottom: 12px; font-size: 14px; line-height: 1.6; color: #cbd5e1; }
@@ -80,17 +76,17 @@
         <div class="display-panel">
             <div class="loot-card" id="current-card"></div>
             <p id="deck-info" style="font-weight:900; color:#64748b; margin:0; font-size:18px;">남은 카드: 0</p>
-            <div style="width:100%; max-width:380px;">
+            <div style="width:100%; max-width:380px; text-align: center;">
                 <button class="btn btn-draw" id="draw-btn" onclick="drawCard()">카드 드로우</button>
                 <div class="assign-grid" id="assign-area">
                     <button class="btn btn-name" onclick="assignTo('김명흠')">명흠</button>
                     <button class="btn btn-name" onclick="assignTo('배현우')">현우</button>
                     <button class="btn btn-name" onclick="assignTo('정태영')">태영</button>
+                    <button class="btn btn-monster" style="grid-column: span 3;" onclick="assignToMonster()">💀 몬스터가 노획 (제거)</button>
                 </div>
             </div>
         </div>
         <div class="log-panel">
-            <!-- 명흠 박스 -->
             <div class="player-box">
                 <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/characters/images/fh-geminate.png" class="hero-portrait">
                 <div class="player-header">
@@ -99,7 +95,6 @@
                 </div>
                 <div id="log-김명흠" class="summary-container"></div>
             </div>
-            <!-- 현우 박스 -->
             <div class="player-box">
                 <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/characters/images/fh-banner-spear.png" class="hero-portrait">
                 <div class="player-header">
@@ -108,7 +103,6 @@
                 </div>
                 <div id="log-배현우" class="summary-container"></div>
             </div>
-            <!-- 태영 박스 -->
             <div class="player-box">
                 <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/characters/images/fh-frozen-fist.png" class="hero-portrait">
                 <div class="player-header">
@@ -124,25 +118,34 @@
         </div>
     </div>
 </div>
+
 <!-- 시작 전 체크 모달 -->
 <div id="start-check-modal" class="modal">
-    <div class="modal-content" style="max-width: 450px; text-align: center;">
+    <div class="modal-content" style="max-width: 480px; text-align: center;">
         <h2 style="color:var(--accent); margin-bottom: 25px;">📢 원정 준비 확인</h2>
         
-        <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;">
-            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; border: 1px solid var(--border); display: flex; align-items: center; gap: 15px;">
-                <span style="font-size: 30px;">⛺</span>
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
+            <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; border: 1px solid var(--border); display: flex; align-items: center; gap: 15px;">
+                <span style="font-size: 24px;">⛺</span>
                 <div style="text-align: left;">
-                    <div style="font-weight: 800; color: white;">여로 이벤트</div>
-                    <div style="font-size: 13px; color: #94a3b8;">마을을 떠나며 마주친 사건을 해결했나요?</div>
+                    <div style="font-weight: 800; color: white;">여로 이벤트 (계절/항해)</div>
+                    <div style="font-size: 12px; color: #94a3b8;">여름/겨울 또는 항해(Boat) 여로를 해결했나요?</div>
                 </div>
             </div>
             
-            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; border: 1px solid var(--border); display: flex; align-items: center; gap: 15px;">
-                <span style="font-size: 30px;">🎯</span>
+            <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; border: 1px solid var(--border); display: flex; align-items: center; gap: 15px;">
+                <span style="font-size: 24px;">🎯</span>
                 <div style="text-align: left;">
                     <div style="font-weight: 800; color: white;">개인 전투 목표</div>
-                    <div style="font-size: 13px; color: #94a3b8;">각자 이번 시나리오의 목표를 뽑았나요?</div>
+                    <div style="font-size: 12px; color: #94a3b8;">각자 이번 판의 전투 목표를 뽑았나요?</div>
+                </div>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; border: 1px solid var(--border); display: flex; align-items: center; gap: 15px;">
+                <span style="font-size: 24px;">🃏</span>
+                <div style="text-align: left;">
+                    <div style="font-weight: 800; color: white;">도전(Challenge) 추가</div>
+                    <div style="font-size: 12px; color: #94a3b8;">도전 카드를 뽑아 난이도를 높였나요?</div>
                 </div>
             </div>
         </div>
@@ -153,7 +156,20 @@
         </div>
     </div>
 </div>
-<!-- 정산 모달 -->
+
+<!-- 특정 카드 폐기 선택 모달 -->
+<div id="discard-modal" class="modal" style="z-index: 200;">
+    <div class="modal-content" style="max-width: 400px; text-align: center; padding: 25px;">
+        <div class="close-x" onclick="closeDiscardModal()">✕</div>
+        <h3 id="discard-title" style="color:var(--accent); margin-top:0; margin-bottom: 20px;">카드 버리기</h3>
+        <p style="font-size:13px; color:#94a3b8; margin-bottom:15px;">실수로 획득했거나 버려야 할 카드를 선택하세요.</p>
+        <div id="discard-list" style="display:flex; flex-direction:column; gap:12px; max-height: 50vh; overflow-y: auto;">
+            <!-- 버릴 수 있는 카드 목록이 여기에 생성됩니다 -->
+        </div>
+    </div>
+</div>
+
+<!-- 시나리오 완료 정산 모달 -->
 <div id="settlement-modal" class="modal">
     <div class="modal-content">
         <div class="close-x" onclick="closeModal()">✕</div>
@@ -168,16 +184,14 @@
                 </select>
             </div>
         </div>
-
         <div class="settlement-grid">
             <div>
-                <h3 style="font-size:17px; margin-bottom:20px; color:var(--accent);">📦 캐릭터별 획득 자원</h3>
+                <h3 style="font-size:17px; margin-bottom:20px; color:var(--accent);">📦 캐릭터별 획득 자원 (클릭 시 폐기)</h3>
                 <div id="modal-loot-list" style="display:flex; flex-direction:column; gap:15px;"></div>
                 <div style="margin-top:25px; padding:15px; background:rgba(239, 68, 68, 0.1); border-radius:15px; border:1px dashed var(--fail); font-size:13px; color:#fca5a5; font-weight:700;">
                     ⚠️ 주의: 맵에 남은 전리품/보물상자는 획득할 수 없습니다.
                 </div>
             </div>
-
             <div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:15px;">
                     <button id="tab-success" class="btn" style="background:var(--success); font-size:16px; padding:12px;" onclick="setMode('success')">성공 (Success)</button>
@@ -200,7 +214,11 @@
     setInterval(drawFlakes, 30); createFlakes();
 
     let masterDeck = []; let currentResult = null;
-    const logs = { "김명흠": {}, "배현우": {}, "정태영": {} };
+    let cardIdCounter = 0; // 카드 고유 ID를 위한 카운터
+    
+    // 단순 숫자가 아닌, 각 플레이어가 획득한 카드 배열을 저장합니다.
+    const logs = { "김명흠": [], "배현우": [], "정태영": [] };
+    
     const classIcons = {
         "김명흠": "https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-geminate-bw-icon.png",
         "배현우": "https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-banner-spear-bw-icon.png",
@@ -209,8 +227,6 @@
     const baseUrl = "https://raw.githubusercontent.com/any2cards/worldhaven/master/images/loot-deck/frosthaven/";
     const iconBase = "https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/loot/";
     const backImg = baseUrl + "fh-loot-deck-back.png";
-    
-    // 7레벨 환전율 6으로 수정 완료!
     const rewards = { 0:{xp:4, g:2}, 1:{xp:6, g:2}, 2:{xp:8, g:3}, 3:{xp:10, g:3}, 4:{xp:12, g:4}, 5:{xp:14, g:4}, 6:{xp:16, g:5}, 7:{xp:18, g:6} };
 
     const itemConfig = {
@@ -242,74 +258,152 @@
     function resetAllToZero() { Object.keys(itemConfig).forEach(id => { const el = document.getElementById(`in-${id}`); if(itemConfig[id].isCheck) el.checked=false; else el.value=0; }); }
     function shuffle(a) { for (let i=a.length-1; i>0; i--) { const j=Math.floor(Math.random()*(i+1)); [a[i], a[j]]=[a[j], a[i]]; } return a; }
 
- // 기존 startGame 함수를 이걸로 덮어쓰세요
-function startGame() {
-    // 덱 구성 데이터가 있는지 먼저 확인
-    let hasCard = false;
-    Object.keys(itemConfig).forEach(id => {
-        if(document.getElementById(`in-${id}`).value > 0 || document.getElementById(`in-${id}`).checked) hasCard = true;
-    });
-    
-    if(!hasCard) return alert("카드를 추가하세요!");
+    function startGame() {
+        let hasCard = false;
+        Object.keys(itemConfig).forEach(id => {
+            const val = document.getElementById(`in-${id}`);
+            if(val.type === 'checkbox' ? val.checked : val.value > 0) hasCard = true;
+        });
+        if(!hasCard) return alert("카드를 추가하세요!");
+        document.getElementById('start-check-modal').style.display = 'flex';
+    }
 
-    // 체크 모달 띄우기
-    document.getElementById('start-check-modal').style.display = 'flex';
-}
+    function closeStartCheck() { document.getElementById('start-check-modal').style.display = 'none'; }
 
-// 모달 닫기 (취소)
-function closeStartCheck() {
-    document.getElementById('start-check-modal').style.display = 'none';
-}
-
-// 진짜 시작 (확인 버튼 클릭 시)
-function confirmStart() {
-    document.getElementById('start-check-modal').style.display = 'none';
-    
-    masterDeck = [];
-    Object.keys(itemConfig).forEach(id => {
-        const el = document.getElementById(`in-${id}`); const conf = itemConfig[id];
-        if (conf.isCheck) { if(el.checked) masterDeck.push({type:id, img:conf.img, amount:1}); }
-        else {
-            let count = Math.min(parseInt(el.value)||0, conf.max);
-            if(id==='money') {
-                let m = []; conf.sub.forEach(s=>{ for(let i=0; i<s.max; i++) m.push({type:'money', img:`${s.p}-${s.s+i}.png`, amount:s.v}); });
-                shuffle(m); for(let i=0; i<count; i++) masterDeck.push(m[i]);
-            } else {
-                let nums = []; for(let i=0; i<conf.max; i++) nums.push(conf.s+i);
-                shuffle(nums); for(let i=0; i<count; i++) {
-                    let amt = (conf.x2 && (nums[i]-conf.s) < conf.x2) ? 2 : 1;
-                    masterDeck.push({type:id, img:`${conf.p}-${nums[i]}.png`, amount:amt});
+    function confirmStart() {
+        document.getElementById('start-check-modal').style.display = 'none';
+        masterDeck = [];
+        Object.keys(itemConfig).forEach(id => {
+            const el = document.getElementById(`in-${id}`); const conf = itemConfig[id];
+            if (conf.isCheck) { if(el.checked) masterDeck.push({type:id, img:conf.img, amount:1}); }
+            else {
+                let count = Math.min(parseInt(el.value)||0, conf.max);
+                if(id==='money') {
+                    let m = []; conf.sub.forEach(s=>{ for(let i=0; i<s.max; i++) m.push({type:'money', img:`${s.p}-${s.s+i}.png`, amount:s.v}); });
+                    shuffle(m); for(let i=0; i<count; i++) masterDeck.push(m[i]);
+                } else {
+                    let nums = []; for(let i=0; i<conf.max; i++) nums.push(conf.s+i);
+                    shuffle(nums); for(let i=0; i<count; i++) {
+                        let amt = (conf.x2 && (nums[i]-conf.s) < conf.x2) ? 2 : 1;
+                        masterDeck.push({type:id, img:`${conf.p}-${nums[i]}.png`, amount:amt});
+                    }
                 }
             }
-        }
-    });
+        });
+        shuffle(masterDeck); 
+        document.getElementById('setup-area').style.display='none'; 
+        document.getElementById('play-area').style.display='grid';
+        showCard(backImg); 
+        updateUI();
+    }
+
+    function showCard(s) { document.getElementById('current-card').innerHTML = `<img src="${s}">`; }
     
-    shuffle(masterDeck); 
-    document.getElementById('setup-area').style.display='none'; 
-    document.getElementById('play-area').style.display='grid';
-    showCard(backImg); 
-    updateUI();
-}    function showCard(s) { document.getElementById('current-card').innerHTML = `<img src="${s}">`; }
     function drawCard() {
         if(!masterDeck.length) return alert("덱이 비었습니다!");
-        currentResult = masterDeck.pop(); showCard(baseUrl + currentResult.img);
-        document.getElementById('assign-area').style.visibility='visible'; document.getElementById('draw-btn').disabled=true; updateUI();
+        currentResult = masterDeck.pop(); 
+        showCard(baseUrl + currentResult.img);
+        document.getElementById('assign-area').style.visibility='visible'; 
+        document.getElementById('draw-btn').disabled=true; 
+        updateUI();
     }
+
     function assignTo(n) {
         if(!currentResult) return;
-        logs[n][currentResult.type] = (logs[n][currentResult.type]||0) + currentResult.amount;
-        const cont = document.getElementById(`log-${n}`); cont.innerHTML = "";
-        Object.entries(logs[n]).forEach(([t, c]) => { cont.innerHTML += `<div class="log-item"><img src="${itemConfig[t].icon}" class="log-icon"> x${c}</div>`; });
-        showCard(backImg); document.getElementById('assign-area').style.visibility='hidden'; document.getElementById('draw-btn').disabled=false;
-        currentResult = null; updateUI();
+        // 카드를 획득할 때 고유 ID를 부여하여 배열에 추가
+        logs[n].push({ ...currentResult, uid: cardIdCounter++ });
+        renderLogs(n);
+        finishAssign();
     }
+
+    function assignToMonster() {
+        if(!currentResult) return;
+        // 몬스터가 가져가면 아무에게도 기록되지 않고 턴 종료
+        finishAssign();
+    }
+
+    function finishAssign() {
+        showCard(backImg); 
+        document.getElementById('assign-area').style.visibility='hidden'; 
+        document.getElementById('draw-btn').disabled=false;
+        currentResult = null; 
+        updateUI();
+    }
+
+    function renderLogs(n) {
+        const cont = document.getElementById(`log-${n}`); 
+        cont.innerHTML = "";
+        
+        // 보유중인 카드를 자원별로 합산하여 UI에 표시
+        let counts = {};
+        logs[n].forEach(card => {
+            counts[card.type] = (counts[card.type] || 0) + card.amount;
+        });
+
+        Object.entries(counts).forEach(([t, c]) => { 
+            cont.innerHTML += `<div class="log-item" onclick="openDiscardModal('${n}', '${t}')"><img src="${itemConfig[t].icon}" class="log-icon"> x${c}</div>`; 
+        });
+    }
+
+    // 특정 자원의 폐기 목록(실제 카드들)을 보여주는 모달 열기
+    function openDiscardModal(player, type) {
+        const modal = document.getElementById('discard-modal');
+        const list = document.getElementById('discard-list');
+        document.getElementById('discard-title').innerText = `${player}님의 ${itemConfig[type].label} 확인/버리기`;
+        list.innerHTML = "";
+        
+        // 해당 플레이어가 보유한 특정 자원의 카드들만 필터링
+        const cards = logs[player].filter(c => c.type === type);
+        if(cards.length === 0) return;
+
+        cards.forEach(card => {
+            list.innerHTML += `
+                <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.05); padding:10px 15px; border-radius:15px; border:1px solid rgba(255,255,255,0.1);">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <img src="${baseUrl + card.img}" style="height:60px; border-radius:6px; box-shadow:0 4px 6px rgba(0,0,0,0.5);">
+                        <div style="text-align:left;">
+                            <span style="font-weight:900; color:white; font-size:16px;">${itemConfig[type].label}</span>
+                            <div style="font-size:12px; color:#94a3b8;">${card.amount}개 짜리 카드</div>
+                        </div>
+                    </div>
+                    <button class="btn" style="width:auto; padding:10px 15px; background:var(--fail); font-size:14px; border-radius:10px;" onclick="removeCard('${player}', ${card.uid})">버리기</button>
+                </div>
+            `;
+        });
+        modal.style.display = 'flex';
+    }
+
+    // 선택한 카드 고유 ID를 이용해 완전히 삭제
+    function removeCard(player, uid) {
+        if(confirm('해당 카드를 정말로 폐기하시겠습니까?')) {
+            logs[player] = logs[player].filter(c => c.uid !== uid);
+            closeDiscardModal();
+            renderLogs(player);
+            // 정산 모달이 열려있는 상태라면 정산 모달도 업데이트
+            if(document.getElementById('settlement-modal').style.display === 'flex') {
+                openSettlement();
+            }
+        }
+    }
+
+    function closeDiscardModal() {
+        document.getElementById('discard-modal').style.display = 'none';
+    }
+
     function updateUI() { document.getElementById('deck-info').innerText = `남은 카드: ${masterDeck.length}`; }
 
     function openSettlement() {
         document.getElementById('settlement-modal').style.display = 'flex';
         const list = document.getElementById('modal-loot-list'); list.innerHTML = "";
+        
         Object.keys(logs).forEach(name => {
-            const playerItems = Object.entries(logs[name]).map(([t, c]) => `<div class="log-item"><img src="${itemConfig[t].icon}" class="log-icon"> x${c}</div>`).join("");
+            let counts = {};
+            logs[name].forEach(card => {
+                counts[card.type] = (counts[card.type] || 0) + card.amount;
+            });
+
+            const playerItems = Object.entries(counts).map(([t, c]) => `<div class="log-item" onclick="openDiscardModal('${name}', '${t}')"><img src="${itemConfig[t].icon}" class="log-icon"> x${c}</div>`).join("");
+            
             list.innerHTML += `<div style="display:flex; align-items:center; gap:15px; background:rgba(255,255,255,0.05); padding:12px; border-radius:18px; border:1px solid rgba(255,255,255,0.1);">
                 <div class="class-icon-circle"><img src="${classIcons[name]}"></div>
                 <div style="flex:1;">
@@ -322,6 +416,7 @@ function confirmStart() {
     }
 
     function closeModal() { document.getElementById('settlement-modal').style.display = 'none'; }
+    
     function setMode(m) {
         mode = m;
         document.getElementById('tab-success').style.background = (m==='success') ? 'var(--success)' : '#1e293b';
@@ -334,8 +429,6 @@ function confirmStart() {
         const lv = document.getElementById('final-lv').value;
         const rv = rewards[lv];
         const area = document.getElementById('guide-area');
-        
-        // 상세 보상 안내 텍스트 (복구 완료)
         let commonHtml = `
             <div style="border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:15px; padding-bottom:5px;">
                 <h4 style="margin:0; font-size:15px; color:white;">1. 공통 단계 (모두 수행)</h4>
