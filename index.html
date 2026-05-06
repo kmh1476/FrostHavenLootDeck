@@ -26,8 +26,26 @@
         .player-box { position: relative; overflow: hidden; padding: 15px 15px 15px 100px; background: rgba(15, 23, 42, 0.95); border-radius: 20px; border: 1px solid var(--border); min-height: 110px; display: flex; flex-direction: column; justify-content: center; margin-bottom: 12px; }
         .hero-portrait { position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 120px; height: 120px; object-fit: cover; opacity: 0.4; mask-image: linear-gradient(to right, black 30%, transparent 90%); -webkit-mask-image: linear-gradient(to right, black 30%, transparent 90%); z-index: 0; }
         .player-header { display: flex; align-items: center; gap: 10px; z-index: 2; margin-bottom: 5px; }
-        .class-icon-circle { width: 36px; height: 36px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--accent); flex-shrink: 0; }
-        .class-icon-circle img { width: 26px; height: 26px; }
+        
+        /* 캐릭터 아이콘 - 원형 및 중앙 정렬, 상호작용 디자인 개선 */
+        .class-icon-circle { 
+            width: 40px; 
+            height: 40px; 
+            background: white; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border: 2px solid var(--accent); 
+            flex-shrink: 0; 
+            overflow: hidden; 
+        }
+        .class-icon-circle img { 
+            width: 75%; 
+            height: 75%; 
+            object-fit: contain; 
+        }
+        
         .name-tag { font-weight: 900; color: white; font-size: 22px; text-shadow: 0 2px 4px black; }
         
         .log-item { background: white; color: #020617; padding: 4px 10px; border-radius: 10px; display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 900; box-shadow: 0 2px 4px rgba(0,0,0,0.2); cursor: pointer; transition: transform 0.1s; }
@@ -53,16 +71,6 @@
         .step-tag { display: inline-block; background: var(--accent); color: #020617; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 900; margin-bottom: 5px; }
         .step-item { margin-bottom: 12px; font-size: 14px; line-height: 1.6; color: #cbd5e1; }
         .highlight { color: white; font-weight: 800; border-bottom: 1px solid var(--accent); }
-        #settings-content img, .party-member-icon, .setting-item img {
-background-color: white !important;
-border-radius: 50% !important;
-aspect-ratio: 1 / 1;
-object-fit: contain;
-padding: 4px;
-box-sizing: border-box;
-}
-
-
     </style>
 </head>
 <body>
@@ -256,7 +264,7 @@ box-sizing: border-box;
         party.forEach((p, idx) => {
             list.innerHTML += `
                 <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.05); padding:10px; border-radius:15px; border:1px solid var(--border);">
-                    <div class="class-icon-circle" style="cursor:pointer; background: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; overflow: hidden;" onclick="openClassSelect(${idx})" title="직업 변경">
+                    <div class="class-icon-circle" style="cursor:pointer;" onclick="openClassSelect(${idx})" title="직업 변경">
                         <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${p.cls}-icon.png" onerror="this.src='https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${p.cls}-bw-icon.png'">
                     </div>
                     <input type="text" value="${p.name}" style="flex:1; background:#020617; border:1px solid rgba(255,255,255,0.2); color:white; border-radius:8px; padding:10px; font-size:16px; font-weight:800;" onchange="updatePartyName(${idx}, this.value)" placeholder="이름 입력">
@@ -283,7 +291,7 @@ box-sizing: border-box;
         const grid = document.getElementById('class-grid'); grid.innerHTML = "";
         fhClasses.forEach(cls => {
             grid.innerHTML += `
-                <div style="background: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; overflow: hidden;padding: 5px; box-sizing: border-box;" onclick="selectClass('${cls}')" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='transparent'">
+                <div style="background:#1e293b; padding:15px; border-radius:15px; cursor:pointer; border:2px solid transparent; display:flex; justify-content:center;" onclick="selectClass('${cls}')" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='transparent'">
                     <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${cls}-icon.png" style="width:40px; height:40px;" onerror="this.src='https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${cls}-bw-icon.png'">
                 </div>
             `;
@@ -415,7 +423,7 @@ box-sizing: border-box;
 
     function renderLogs(n) {
         const cont = document.getElementById(`log-${n}`); 
-        if(!cont) return; // 보호 처리
+        if(!cont) return;
         cont.innerHTML = "";
         
         let counts = {};
