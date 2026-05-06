@@ -39,7 +39,7 @@
         .btn-draw { background: linear-gradient(135deg, #0ea5e9, #0284c7); color: white; box-shadow: 0 4px 0 #0369a1; }
         .btn-monster { background: linear-gradient(135deg, #64748b, #475569); color: white; box-shadow: 0 4px 0 #334155; margin-top: 8px; font-size: 14px; padding: 10px; }
         .btn-finish { background: linear-gradient(135deg, #6366f1, #4f46e5); color: white; box-shadow: 0 4px 0 #3730a3; }
-        .assign-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; visibility: hidden; margin-top: 10px; }
+        .assign-grid { display: grid; gap: 10px; width: 100%; visibility: hidden; margin-top: 10px; }
         .btn-name { background: #1e293b; color: white; font-size: 15px; padding: 12px 5px; border-radius: 12px; box-shadow: 0 4px 0 #0f172a; font-weight: 900; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 100; justify-content: center; align-items: center; padding: 10px; }
@@ -63,7 +63,10 @@
     <div id="setup-area">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
             <span style="font-size:20px; font-weight:900; color:var(--accent);">원정대 노획 세팅</span>
-            <button onclick="resetAllToZero()" style="background:#1e293b; color:#94a3b8; border:none; padding:8px 15px; border-radius:10px; font-size:13px; font-weight:800;">초기화</button>
+            <div>
+                <button onclick="openPartyModal()" style="background:#6366f1; color:white; border:none; padding:8px 15px; border-radius:10px; font-size:13px; font-weight:800; margin-right:5px; cursor:pointer;">👥 파티 설정</button>
+                <button onclick="resetAllToZero()" style="background:#1e293b; color:#94a3b8; border:none; padding:8px 15px; border-radius:10px; font-size:13px; font-weight:800; cursor:pointer;">초기화</button>
+            </div>
         </div>
         <div class="setup-grid" id="grid-basic"></div>
         <div class="setup-grid" id="grid-herbs"></div>
@@ -79,77 +82,41 @@
             <div style="width:100%; max-width:380px; text-align: center;">
                 <button class="btn btn-draw" id="draw-btn" onclick="drawCard()">카드 드로우</button>
                 <div class="assign-grid" id="assign-area">
-                    <button class="btn btn-name" onclick="assignTo('김명흠')">명흠</button>
-                    <button class="btn btn-name" onclick="assignTo('배현우')">현우</button>
-                    <button class="btn btn-name" onclick="assignTo('정태영')">태영</button>
-                    <button class="btn btn-monster" style="grid-column: span 3;" onclick="assignToMonster()">💀 몬스터가 노획 (제거)</button>
-                </div>
+                    </div>
             </div>
         </div>
-        <div class="log-panel">
-            <div class="player-box">
-                <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/characters/images/fh-geminate.png" class="hero-portrait">
-                <div class="player-header">
-                    <div class="class-icon-circle"><img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-geminate-bw-icon.png"></div>
-                    <div class="name-tag">김명흠</div>
-                </div>
-                <div id="log-김명흠" class="summary-container"></div>
+        <div class="log-panel" id="log-panel-container">
             </div>
-            <div class="player-box">
-                <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/characters/images/fh-banner-spear.png" class="hero-portrait">
-                <div class="player-header">
-                    <div class="class-icon-circle"><img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-banner-spear-bw-icon.png"></div>
-                    <div class="name-tag">배현우</div>
-                </div>
-                <div id="log-배현우" class="summary-container"></div>
-            </div>
-            <div class="player-box">
-                <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/characters/images/fh-frozen-fist.png" class="hero-portrait">
-                <div class="player-header">
-                    <div class="class-icon-circle"><img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-frozen-fist-bw-icon.png"></div>
-                    <div class="name-tag">정태영</div>
-                </div>
-                <div id="log-정태영" class="summary-container"></div>
-            </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:5px;">
-                <button class="btn btn-finish" onclick="openSettlement()">🏁 시나리오 완료</button>
-                <button class="btn btn-name" style="background:#0f172a; box-shadow:none; border:1px solid #1e293b;" onclick="location.reload()">처음으로</button>
-            </div>
-        </div>
     </div>
 </div>
 
-<!-- 시작 전 체크 모달 -->
-<div id="start-check-modal" class="modal">
+<div id="party-modal" class="modal" style="z-index: 150;">
+    <div class="modal-content" style="max-width: 500px; text-align: center;">
+        <div class="close-x" onclick="closePartyModal()">✕</div>
+        <h2 style="color:var(--accent); margin-bottom: 20px;">👥 원정대 파티 설정</h2>
+        <p style="font-size:13px; color:#94a3b8; margin-bottom:15px; text-align:left;">클래스 아이콘을 클릭하여 직업을 변경하세요. 변경된 파티는 브라우저에 자동 저장됩니다.</p>
+        <div id="party-list" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;"></div>
+        <button class="btn" style="background: rgba(255,255,255,0.1); color: white; margin-bottom: 15px; font-size:15px;" onclick="addPartyMember()">+ 플레이어 추가</button>
+        <button class="btn btn-draw" onclick="saveParty()">저장하기</button>
+    </div>
+</div>
+
+<div id="class-select-modal" class="modal" style="z-index: 160;">
+    <div class="modal-content" style="max-width: 450px; text-align: center; padding: 25px;">
+        <div class="close-x" onclick="closeClassSelectModal()">✕</div>
+        <h3 style="color:var(--accent); margin-top:0; margin-bottom: 20px;">클래스 선택</h3>
+        <div id="class-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;"></div>
+    </div>
+</div>
+
+<div id="start-check-modal" class="modal" style="z-index: 100;">
     <div class="modal-content" style="max-width: 480px; text-align: center;">
         <h2 style="color:var(--accent); margin-bottom: 25px;">📢 원정 준비 확인</h2>
-        
         <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;">
-            <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; border: 1px solid var(--border); display: flex; align-items: center; gap: 15px;">
-                <span style="font-size: 24px;">⛺</span>
-                <div style="text-align: left;">
-                    <div style="font-weight: 800; color: white;">여로 이벤트 (계절/항해)</div>
-                    <div style="font-size: 12px; color: #94a3b8;">여름/겨울 또는 항해 여로를 해결했나요?</div>
-                </div>
-            </div>
-            
-            <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; border: 1px solid var(--border); display: flex; align-items: center; gap: 15px;">
-                <span style="font-size: 24px;">🎯</span>
-                <div style="text-align: left;">
-                    <div style="font-weight: 800; color: white;">개인 전투 목표</div>
-                    <div style="font-size: 12px; color: #94a3b8;">각자 이번 판의 전투 목표를 뽑았나요?</div>
-                </div>
-            </div>
-
-            <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; border: 1px solid var(--border); display: flex; align-items: center; gap: 15px;">
-                <span style="font-size: 24px;">🃏</span>
-                <div style="text-align: left;">
-                    <div style="font-weight: 800; color: white;">도전 추가</div>
-                    <div style="font-size: 12px; color: #94a3b8;">도전 카드를 뽑아 난이도를 높였나요?</div>
-                </div>
-            </div>
+            <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; border: 1px solid var(--border); display: flex; align-items: center; gap: 15px;"><span style="font-size: 24px;">⛺</span><div style="text-align: left;"><div style="font-weight: 800; color: white;">여로 이벤트 (계절/항해)</div><div style="font-size: 12px; color: #94a3b8;">여름/겨울 또는 항해(Boat) 여로를 해결했나요?</div></div></div>
+            <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; border: 1px solid var(--border); display: flex; align-items: center; gap: 15px;"><span style="font-size: 24px;">🎯</span><div style="text-align: left;"><div style="font-weight: 800; color: white;">개인 전투 목표</div><div style="font-size: 12px; color: #94a3b8;">각자 이번 판의 전투 목표를 뽑았나요?</div></div></div>
+            <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; border: 1px solid var(--border); display: flex; align-items: center; gap: 15px;"><span style="font-size: 24px;">🃏</span><div style="text-align: left;"><div style="font-weight: 800; color: white;">도전(Challenge) 추가</div><div style="font-size: 12px; color: #94a3b8;">도전 카드를 뽑아 난이도를 높였나요?</div></div></div>
         </div>
-
         <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 10px;">
             <button class="btn" style="background: #991b1b; font-size: 16px;" onclick="closeStartCheck()">아직요!</button>
             <button class="btn btn-draw" style="font-size: 16px;" onclick="confirmStart()">네, 준비됐습니다!</button>
@@ -157,20 +124,16 @@
     </div>
 </div>
 
-<!-- 특정 카드 폐기 선택 모달 -->
 <div id="discard-modal" class="modal" style="z-index: 200;">
     <div class="modal-content" style="max-width: 400px; text-align: center; padding: 25px;">
         <div class="close-x" onclick="closeDiscardModal()">✕</div>
         <h3 id="discard-title" style="color:var(--accent); margin-top:0; margin-bottom: 20px;">카드 버리기</h3>
         <p style="font-size:13px; color:#94a3b8; margin-bottom:15px;">실수로 획득했거나 버려야 할 카드를 선택하세요.</p>
-        <div id="discard-list" style="display:flex; flex-direction:column; gap:12px; max-height: 50vh; overflow-y: auto;">
-            <!-- 버릴 수 있는 카드 목록이 여기에 생성됩니다 -->
-        </div>
+        <div id="discard-list" style="display:flex; flex-direction:column; gap:12px; max-height: 50vh; overflow-y: auto;"></div>
     </div>
 </div>
 
-<!-- 시나리오 완료 정산 모달 -->
-<div id="settlement-modal" class="modal">
+<div id="settlement-modal" class="modal" style="z-index: 100;">
     <div class="modal-content">
         <div class="close-x" onclick="closeModal()">✕</div>
         <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:20px; border-bottom: 2px solid var(--accent); padding-bottom:15px; padding-right:65px;">
@@ -213,17 +176,23 @@
     function moveFlakes() { flakes.forEach(f => { f.y += f.d; f.x += Math.sin(f.y/80); if(f.y > canvas.height) f.y = -20; }); }
     setInterval(drawFlakes, 30); createFlakes();
 
-    let masterDeck = []; let currentResult = null;
-    let cardIdCounter = 0; // 카드 고유 ID를 위한 카운터
-    
-    // 단순 숫자가 아닌, 각 플레이어가 획득한 카드 배열을 저장합니다.
-    const logs = { "김명흠": [], "배현우": [], "정태영": [] };
-    
-    const classIcons = {
-        "김명흠": "https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-geminate-bw-icon.png",
-        "배현우": "https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-banner-spear-bw-icon.png",
-        "정태영": "https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-frozen-fist-bw-icon.png"
-    };
+    // 프로스트헤이븐 전 직업 고유 기호 (17종)
+    const fhClasses = [
+        "drifter", "blinkblade", "banner-spear", "deathwalker", "geminate", "boneshaper",
+        "crashing-tide", "deepwraith", "frozen-fist", "hive", "infuser", "metal-mosaic",
+        "pain-conduit", "pyroclast", "shattersong", "snowdancer", "trapper"
+    ];
+
+    // 로컬 스토리지에서 파티 불러오기 (없으면 기본값 세팅)
+    let party = JSON.parse(localStorage.getItem('fh_party_setup')) || [
+        { name: "김명흠", cls: "geminate" },
+        { name: "배현우", cls: "banner-spear" },
+        { name: "정태영", cls: "frozen-fist" }
+    ];
+
+    let masterDeck = []; let currentResult = null; let cardIdCounter = 0; 
+    let logs = {};
+
     const baseUrl = "https://raw.githubusercontent.com/any2cards/worldhaven/master/images/loot-deck/frosthaven/";
     const iconBase = "https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/loot/";
     const backImg = baseUrl + "fh-loot-deck-back.png";
@@ -246,6 +215,9 @@
     };
 
     function init() {
+        initPartyLogs();
+        renderPlayAreaUI(); // 동적 파티 UI 생성
+
         ["grid-basic", "grid-herbs", "grid-special", "grid-scenario"].forEach(id => document.getElementById(id).innerHTML = "");
         Object.keys(itemConfig).forEach(id => {
             const conf = itemConfig[id]; const grid = document.getElementById(`grid-${conf.group}`);
@@ -254,6 +226,109 @@
             grid.innerHTML += `<div class="input-group"><div class="icon-wrapper"><img src="${conf.icon}" class="setup-icon"></div><span style="font-size:12px; color:#94a3b8; font-weight:700;">${conf.label}</span>${input}</div>`;
         });
     }
+
+    // --- 파티 시스템 ---
+    function initPartyLogs() {
+        party.forEach(p => { if (!logs[p.name]) logs[p.name] = []; });
+    }
+
+    let currentSelectingIndex = -1;
+
+    function openPartyModal() {
+        renderPartySetup();
+        document.getElementById('party-modal').style.display = 'flex';
+    }
+
+    function closePartyModal() { document.getElementById('party-modal').style.display = 'none'; }
+
+    function renderPartySetup() {
+        const list = document.getElementById('party-list'); list.innerHTML = "";
+        party.forEach((p, idx) => {
+            list.innerHTML += `
+                <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.05); padding:10px; border-radius:15px; border:1px solid var(--border);">
+                    <div class="class-icon-circle" style="cursor:pointer; background:#1e293b;" onclick="openClassSelect(${idx})" title="직업 변경">
+                        <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${p.cls}-icon.png" onerror="this.src='https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${p.cls}-bw-icon.png'">
+                    </div>
+                    <input type="text" value="${p.name}" style="flex:1; background:#020617; border:1px solid rgba(255,255,255,0.2); color:white; border-radius:8px; padding:10px; font-size:16px; font-weight:800;" onchange="updatePartyName(${idx}, this.value)" placeholder="이름 입력">
+                    <button onclick="removePartyMember(${idx})" style="background:var(--fail); color:white; border:none; border-radius:8px; width:40px; height:40px; font-size:20px; font-weight:bold; cursor:pointer;">✕</button>
+                </div>
+            `;
+        });
+    }
+
+    function updatePartyName(idx, val) { party[idx].name = val; }
+    function addPartyMember() {
+        if(party.length >= 4) return alert("파티는 최대 4명까지 가능합니다!");
+        party.push({ name: `새 플레이어`, cls: 'drifter' });
+        renderPartySetup();
+    }
+    function removePartyMember(idx) {
+        if(party.length <= 1) return alert("최소 1명의 플레이어는 있어야 합니다!");
+        party.splice(idx, 1);
+        renderPartySetup();
+    }
+
+    function openClassSelect(idx) {
+        currentSelectingIndex = idx;
+        const grid = document.getElementById('class-grid'); grid.innerHTML = "";
+        fhClasses.forEach(cls => {
+            grid.innerHTML += `
+                <div style="background:#1e293b; padding:15px; border-radius:15px; cursor:pointer; border:2px solid transparent; display:flex; justify-content:center;" onclick="selectClass('${cls}')" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='transparent'">
+                    <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${cls}-icon.png" style="width:40px; height:40px;" onerror="this.src='https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${cls}-bw-icon.png'">
+                </div>
+            `;
+        });
+        document.getElementById('class-select-modal').style.display = 'flex';
+    }
+
+    function selectClass(cls) {
+        if (currentSelectingIndex !== -1) {
+            party[currentSelectingIndex].cls = cls;
+            renderPartySetup();
+        }
+        closeClassSelectModal();
+    }
+
+    function closeClassSelectModal() { document.getElementById('class-select-modal').style.display = 'none'; currentSelectingIndex = -1; }
+
+    function saveParty() {
+        localStorage.setItem('fh_party_setup', JSON.stringify(party));
+        closePartyModal();
+        initPartyLogs();
+        renderPlayAreaUI(); // UI 즉시 갱신
+        alert("파티 설정이 저장되었습니다!");
+    }
+
+    function renderPlayAreaUI() {
+        const assignArea = document.getElementById('assign-area');
+        assignArea.innerHTML = "";
+        party.forEach(p => { assignArea.innerHTML += `<button class="btn btn-name" onclick="assignTo('${p.name}')">${p.name}</button>`; });
+        assignArea.innerHTML += `<button class="btn btn-monster" style="grid-column: span ${party.length};" onclick="assignToMonster()">💀 몬스터가 노획 (제거)</button>`;
+        assignArea.style.gridTemplateColumns = `repeat(${party.length}, 1fr)`;
+
+        const logAreaContainer = document.getElementById('log-panel-container');
+        logAreaContainer.innerHTML = "";
+        party.forEach(p => {
+            logAreaContainer.innerHTML += `
+                <div class="player-box">
+                    <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/characters/images/fh-${p.cls}.png" class="hero-portrait" onerror="this.style.display='none'">
+                    <div class="player-header">
+                        <div class="class-icon-circle"><img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${p.cls}-icon.png" onerror="this.src='https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${p.cls}-bw-icon.png'"></div>
+                        <div class="name-tag">${p.name}</div>
+                    </div>
+                    <div id="log-${p.name}" class="summary-container"></div>
+                </div>
+            `;
+        });
+        logAreaContainer.innerHTML += `
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:5px;">
+                <button class="btn btn-finish" onclick="openSettlement()">🏁 시나리오 완료</button>
+                <button class="btn btn-name" style="background:#0f172a; box-shadow:none; border:1px solid #1e293b;" onclick="location.reload()">처음으로</button>
+            </div>
+        `;
+        party.forEach(p => renderLogs(p.name));
+    }
+    // --- 파티 시스템 종료 ---
 
     function resetAllToZero() { Object.keys(itemConfig).forEach(id => { const el = document.getElementById(`in-${id}`); if(itemConfig[id].isCheck) el.checked=false; else el.value=0; }); }
     function shuffle(a) { for (let i=a.length-1; i>0; i--) { const j=Math.floor(Math.random()*(i+1)); [a[i], a[j]]=[a[j], a[i]]; } return a; }
@@ -305,165 +380,4 @@
         showCard(baseUrl + currentResult.img);
         document.getElementById('assign-area').style.visibility='visible'; 
         document.getElementById('draw-btn').disabled=true; 
-        updateUI();
-    }
-
-    function assignTo(n) {
-        if(!currentResult) return;
-        // 카드를 획득할 때 고유 ID를 부여하여 배열에 추가
-        logs[n].push({ ...currentResult, uid: cardIdCounter++ });
-        renderLogs(n);
-        finishAssign();
-    }
-
-    function assignToMonster() {
-        if(!currentResult) return;
-        // 몬스터가 가져가면 아무에게도 기록되지 않고 턴 종료
-        finishAssign();
-    }
-
-    function finishAssign() {
-        showCard(backImg); 
-        document.getElementById('assign-area').style.visibility='hidden'; 
-        document.getElementById('draw-btn').disabled=false;
-        currentResult = null; 
-        updateUI();
-    }
-
-    function renderLogs(n) {
-        const cont = document.getElementById(`log-${n}`); 
-        cont.innerHTML = "";
-        
-        // 보유중인 카드를 자원별로 합산하여 UI에 표시
-        let counts = {};
-        logs[n].forEach(card => {
-            counts[card.type] = (counts[card.type] || 0) + card.amount;
-        });
-
-        Object.entries(counts).forEach(([t, c]) => { 
-            cont.innerHTML += `<div class="log-item" onclick="openDiscardModal('${n}', '${t}')"><img src="${itemConfig[t].icon}" class="log-icon"> x${c}</div>`; 
-        });
-    }
-
-    // 특정 자원의 폐기 목록(실제 카드들)을 보여주는 모달 열기
-    function openDiscardModal(player, type) {
-        const modal = document.getElementById('discard-modal');
-        const list = document.getElementById('discard-list');
-        document.getElementById('discard-title').innerText = `${player}님의 ${itemConfig[type].label} 확인/버리기`;
-        list.innerHTML = "";
-        
-        // 해당 플레이어가 보유한 특정 자원의 카드들만 필터링
-        const cards = logs[player].filter(c => c.type === type);
-        if(cards.length === 0) return;
-
-        cards.forEach(card => {
-            list.innerHTML += `
-                <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.05); padding:10px 15px; border-radius:15px; border:1px solid rgba(255,255,255,0.1);">
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <img src="${baseUrl + card.img}" style="height:60px; border-radius:6px; box-shadow:0 4px 6px rgba(0,0,0,0.5);">
-                        <div style="text-align:left;">
-                            <span style="font-weight:900; color:white; font-size:16px;">${itemConfig[type].label}</span>
-                            <div style="font-size:12px; color:#94a3b8;">${card.amount}개 짜리 카드</div>
-                        </div>
-                    </div>
-                    <button class="btn" style="width:auto; padding:10px 15px; background:var(--fail); font-size:14px; border-radius:10px;" onclick="removeCard('${player}', ${card.uid})">버리기</button>
-                </div>
-            `;
-        });
-        modal.style.display = 'flex';
-    }
-
-    // 선택한 카드 고유 ID를 이용해 완전히 삭제
-    function removeCard(player, uid) {
-        if(confirm('해당 카드를 정말로 폐기하시겠습니까?')) {
-            logs[player] = logs[player].filter(c => c.uid !== uid);
-            closeDiscardModal();
-            renderLogs(player);
-            // 정산 모달이 열려있는 상태라면 정산 모달도 업데이트
-            if(document.getElementById('settlement-modal').style.display === 'flex') {
-                openSettlement();
-            }
-        }
-    }
-
-    function closeDiscardModal() {
-        document.getElementById('discard-modal').style.display = 'none';
-    }
-
-    function updateUI() { document.getElementById('deck-info').innerText = `남은 카드: ${masterDeck.length}`; }
-
-    function openSettlement() {
-        document.getElementById('settlement-modal').style.display = 'flex';
-        const list = document.getElementById('modal-loot-list'); list.innerHTML = "";
-        
-        Object.keys(logs).forEach(name => {
-            let counts = {};
-            logs[name].forEach(card => {
-                counts[card.type] = (counts[card.type] || 0) + card.amount;
-            });
-
-            const playerItems = Object.entries(counts).map(([t, c]) => `<div class="log-item" onclick="openDiscardModal('${name}', '${t}')"><img src="${itemConfig[t].icon}" class="log-icon"> x${c}</div>`).join("");
-            
-            list.innerHTML += `<div style="display:flex; align-items:center; gap:15px; background:rgba(255,255,255,0.05); padding:12px; border-radius:18px; border:1px solid rgba(255,255,255,0.1);">
-                <div class="class-icon-circle"><img src="${classIcons[name]}"></div>
-                <div style="flex:1;">
-                    <div style="font-weight:900; margin-bottom:5px; font-size:15px; color:white;">${name}</div>
-                    <div style="display:flex; flex-wrap:wrap; gap:6px;">${playerItems || '<span style="color:#64748b; font-size:12px;">획득 없음</span>'}</div>
-                </div>
-            </div>`;
-        });
-        refreshGuide();
-    }
-
-    function closeModal() { document.getElementById('settlement-modal').style.display = 'none'; }
-    
-    function setMode(m) {
-        mode = m;
-        document.getElementById('tab-success').style.background = (m==='success') ? 'var(--success)' : '#1e293b';
-        document.getElementById('tab-fail').style.background = (m==='fail') ? 'var(--fail)' : '#1e293b';
-        refreshGuide();
-    }
-
-    let mode = 'success';
-    function refreshGuide() {
-        const lv = document.getElementById('final-lv').value;
-        const rv = rewards[lv];
-        const area = document.getElementById('guide-area');
-        let commonHtml = `
-            <div style="border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:15px; padding-bottom:5px;">
-                <h4 style="margin:0; font-size:15px; color:white;">1. 공통 단계 (모두 수행)</h4>
-            </div>
-            <div class="step-item"><span class="step-tag">카드/아이템 회수</span> 모든 능력/아이템 카드 회수</div>
-            <div class="step-item"><span class="step-tag">상태 초기화</span> 체력 재설정 및 모든 상태이상 제거</div>
-            <div class="step-item"><span class="step-tag">공격 보정 덱 정리</span> <span class="highlight">축복, 저주, 마이너스 아이템</span> 제거</div>
-            <div class="step-item"><span class="step-tag">경험치(XP) 계산</span> 획득 XP ${mode==='success' ? '+ <span class="highlight">보너스 '+rv.xp+' XP</span>' : '(성공 보너스 없음)'}</div>
-            <div class="step-item"><span class="step-tag">금화 계산</span> 코인 수 × <span class="highlight">${rv.g} </span> 기록</div>
-        `;
-
-        if(mode === 'success') {
-            area.innerHTML = commonHtml + `
-                <div style="border-bottom:1px solid rgba(255,255,255,0.1); margin:15px 0; padding-bottom:5px;">
-                    <h4 style="margin:0; font-size:15px; color:var(--success);">2. 시나리오 성공 시 보상</h4>
-                </div>
-                <div class="step-item">① <span class="highlight">전리품 자원 획득</span>: 자원(재료, 약초) 시트 기록</div>
-                <div class="step-item">② 전투 목표: 달성 시 체크표시 획득 (3개당 특혜 1개)</div>
-                <div class="step-item">③ 숙련도: 달성 시 <span class="highlight">특혜 마크 1개</span> 획득</div>
-                <div class="step-item">④ 결말 읽기 및 시나리오 보상 수령</div>
-                <div class="step-item">⑤ <span class="highlight">영감 획득</span>: 캠페인 시트 영감 1점 기록 (3인)</div>
-                <div class="step-item">⑥ 지도 업데이트 (스티커 완료 체크)</div>
-                <div class="step-item">⑦ 초소 단계 진행 또는 연결 시나리오로 이동</div>
-            `;
-        } else {
-            area.innerHTML = commonHtml + `
-                <div style="border-bottom:1px solid rgba(255,255,255,0.1); margin:15px 0; padding-bottom:5px;">
-                    <h4 style="margin:0; font-size:15px; color:var(--fail);">2. 실패 시 선택</h4>
-                </div>
-                <div class="step-item"><b>옵션 A:</b> 자원 유지하며 마을로 복귀 (초소 단계 진행)</div>
-                <div class="step-item"><b>옵션 B:</b> <span style="color:#ef4444;">이번 판 자원 모두 상실</span> 후 즉시 재도전</div>
-            `;
-        }
-    }
-    init();
-</script>
-</body>
-</html>
+        updateUI
