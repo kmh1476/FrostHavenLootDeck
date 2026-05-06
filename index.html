@@ -287,17 +287,23 @@
     }
 
     function openClassSelect(idx) {
-        currentSelectingIndex = idx;
-        const grid = document.getElementById('class-grid'); grid.innerHTML = "";
-        fhClasses.forEach(cls => {
-            grid.innerHTML += `
-                <div style="background:#1e293b; padding:15px; border-radius:15px; cursor:pointer; border:2px solid transparent; display:flex; justify-content:center;" onclick="selectClass('${cls}')" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='transparent'">
-                    <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${cls}-icon.png" style="width:40px; height:40px;" onerror="this.src='https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${cls}-bw-icon.png'">
-                </div>
-            `;
-        });
-        document.getElementById('class-select-modal').style.display = 'flex';
-    }
+    currentSelectingIndex = idx;
+    const grid = document.getElementById('class-grid'); grid.innerHTML = "";
+    fhClasses.forEach(cls => {
+        grid.innerHTML += `
+            <div style="background: white; padding: 10px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; display: flex; justify-content: center; align-items: center; width: 65px; height: 65px; margin: 0 auto;" 
+                 onclick="selectClass('${cls}')" 
+                 onmouseover="this.style.borderColor='var(--accent)'; this.style.transform='scale(1.1)';" 
+                 onmouseout="this.style.borderColor='transparent'; this.style.transform='scale(1)';"
+                 style="transition: 0.2s;">
+                <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${cls}-icon.png" 
+                     style="width: 80%; height: 80%; object-fit: contain;" 
+                     onerror="this.src='https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${cls}-bw-icon.png'">
+            </div>
+        `;
+    });
+    document.getElementById('class-select-modal').style.display = 'flex';
+}
 
     function selectClass(cls) {
         if (currentSelectingIndex !== -1) {
