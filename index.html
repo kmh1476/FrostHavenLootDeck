@@ -186,13 +186,65 @@
 </div>
 
 <script>
-    const canvas = document.getElementById('snow-canvas'); const ctx = canvas.getContext('2d'); let flakes = [];
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    window.onresize = resize; resize();
-    function createFlakes() { flakes = []; for(let i=0; i<80; i++) flakes.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*2+1, d: Math.random()*0.8+0.4, a: Math.random()*0.4+0.2 }); }
-    function drawFlakes() { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.beginPath(); flakes.forEach(f => { ctx.fillStyle = `rgba(255, 255, 255, ${f.a})`; ctx.moveTo(f.x, f.y); ctx.arc(f.x, f.y, f.r, 0, Math.PI*2, true); }); ctx.fill(); moveFlakes(); }
-    function moveFlakes() { flakes.forEach(f => { f.y += f.d; f.x += Math.sin(f.y/80); if(f.y > canvas.height) f.y = -20; }); }
-    setInterval(drawFlakes, 30); createFlakes();
+    // --- 눈(Snow) 효과 강화 및 무한 유지 코드 ---
+const canvas = document.getElementById('snow-canvas'); 
+const ctx = canvas.getContext('2d'); 
+let flakes = [];
+
+// 화면 크기 리사이징
+function resize() { 
+    canvas.width = window.innerWidth; 
+    canvas.height = window.innerHeight; 
+}
+window.onresize = resize; 
+resize();
+
+// 눈송이 생성: 개수를 80개에서 180개로 대폭 늘려 화면을 가득 채웁니다.
+function createFlakes() { 
+    flakes = []; 
+    for(let i=0; i<180; i++) { // ❄️ 개수 대폭 증가
+        flakes.push({ 
+            x: Math.random()*canvas.width, 
+            y: Math.random()*canvas.height, // 화면 전체에서 시작하도록 수정
+            r: Math.random()*2+1.5, // 눈송이 크기도 살짝 다양화 (더 크게)
+            d: Math.random()*1.2+0.8, // 기본 낙하 속도를 높임 (더 시원하게)
+            a: Math.random()*0.5+0.3 // 투명도를 다양화하여 입체감 부여
+        }); 
+    } 
+}
+
+// 눈송이 그리기
+function drawFlakes() { 
+    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+    ctx.beginPath(); 
+    flakes.forEach(f => { 
+        ctx.fillStyle = `rgba(255, 255, 255, ${f.a})`; 
+        ctx.moveTo(f.x, f.y); 
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI*2, true); 
+    }); 
+    ctx.fill(); 
+    moveFlakes(); 
+}
+
+// 눈송이 움직임 (무한 루프의 핵심)
+function moveFlakes() { 
+    flakes.forEach(f => { 
+        f.y += f.d; // 아래로 낙하
+        f.x += Math.sin(f.y/80); // 좌우로 살짝 흔들림
+
+        // 🔄 핵심: 눈송이가 바닥(화면 높이)을 벗어나면 바로 위쪽(-20px)으로 이동
+        // 이 로직 덕분에 눈이 끊기지 않고 무한히 내리는 것처럼 보입니다.
+        if(f.y > canvas.height) { 
+            f.y = -20; // 화면 바로 위에서 다시 시작
+            f.x = Math.random()*canvas.width; // 가로 위치는 다시 랜덤하게
+        } 
+    }); 
+}
+
+// 그리기 주기 (타이머): 30ms에서 20ms로 줄여 애니메이션을 더 부드럽고 빠르게 만듦
+setInterval(drawFlakes, 20); // ❄️ 속도 가속
+createFlakes();
+// --- 눈(Snow) 효과 코드 종료 ---
 
     // 프로스트헤이븐 전 직업 고유 기호 (17종)
     const fhClasses = [
