@@ -256,7 +256,7 @@ box-sizing: border-box;
         party.forEach((p, idx) => {
             list.innerHTML += `
                 <div style="display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.05); padding:10px; border-radius:15px; border:1px solid var(--border);">
-                    <div class="class-icon-circle" style="cursor:pointer; background:#1e293b;" onclick="openClassSelect(${idx})" title="직업 변경">
+                    <div class="class-icon-circle" style="cursor:pointer; background: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; overflow: hidden;" onclick="openClassSelect(${idx})" title="직업 변경">
                         <img src="https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${p.cls}-icon.png" onerror="this.src='https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/characters/fh-${p.cls}-bw-icon.png'">
                     </div>
                     <input type="text" value="${p.name}" style="flex:1; background:#020617; border:1px solid rgba(255,255,255,0.2); color:white; border-radius:8px; padding:10px; font-size:16px; font-weight:800;" onchange="updatePartyName(${idx}, this.value)" placeholder="이름 입력">
