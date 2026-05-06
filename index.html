@@ -53,14 +53,17 @@
         .step-tag { display: inline-block; background: var(--accent); color: #020617; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 900; margin-bottom: 5px; }
         .step-item { margin-bottom: 12px; font-size: 14px; line-height: 1.6; color: #cbd5e1; }
         .highlight { color: white; font-weight: 800; border-bottom: 1px solid var(--accent); }
-        img {
+        /* 설정창 내의 캐릭터 아이콘들만 원형 배경 적용 */
+#settings img, .settings-modal img, .character-selection img {
     background-color: white !important;
-    border-radius: 50% !important;    /* 배경을 완벽한 원형으로 */
-    aspect-ratio: 1 / 1;             /* 가로세로 비율을 1:1로 고정 */
-    object-fit: contain;             /* 아이콘 모양이 잘리지 않게 안으로 삽입 */
-    padding: 10%;                    /* 원 테두리와 아이콘 사이의 여유 공간 */
+    border-radius: 50% !important;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    padding: 5px;
     box-sizing: border-box;
+    border: 1px solid #ccc; /* 원형 테두리 살짝 추가 */
 }
+
 
     </style>
 </head>
