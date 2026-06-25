@@ -23,6 +23,9 @@
         .loot-card { width: 220px; height: 306px; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,1); background: #0f172a; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
         .loot-card img { width: 100%; height: 100%; object-fit: contain; }
 
+        .deck-chip { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 4px 9px 4px 4px; display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 800; color: #cbd5e1; }
+        .deck-chip img { width: 16px; height: 16px; background: white; border-radius: 50%; padding: 3px; box-sizing: border-box; }
+
         .player-box { position: relative; overflow: hidden; padding: 15px 15px 15px 100px; background: rgba(15, 23, 42, 0.95); border-radius: 20px; border: 1px solid var(--border); min-height: 110px; display: flex; flex-direction: column; justify-content: center; margin-bottom: 12px; }
         .hero-portrait { position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 120px; height: 120px; object-fit: cover; opacity: 0.6; mask-image: linear-gradient(to right, black 30%, transparent 90%); -webkit-mask-image: linear-gradient(to right, black 30%, transparent 90%); z-index: 0; }
         .player-header { display: flex; align-items: center; gap: 10px; z-index: 2; margin-bottom: 5px; }
@@ -97,6 +100,7 @@
         <div class="display-panel">
             <div class="loot-card" id="current-card"></div>
             <p id="deck-info" style="font-weight:900; color:#64748b; margin:0; font-size:18px;">남은 카드: 0</p>
+            <div id="deck-preview" style="display:flex; flex-wrap:wrap; justify-content:center; gap:6px; max-width:380px;"></div>
             <div style="width:100%; max-width:380px; text-align: center;">
                 <button class="btn btn-draw" id="draw-btn" onclick="drawCard()">카드 드로우</button>
                 <div class="assign-grid" id="assign-area">
@@ -275,7 +279,7 @@ createFlakes();
         "metal": { group: "basic", label: "금속", icon: iconBase + "fh-metal-bw-icon.png", p:"fh-metal", s:1409, e:1416, max: 8, x2: 3 },
         "hide": { group: "basic", label: "가죽", icon: iconBase + "fh-hide-bw-icon.png", p:"fh-hide", s:1393, e:1400, max: 8, x2: 3 },
         "h1": { group: "herbs", label: "화살덩굴", icon: iconBase + "fh-arrowvine-bw-icon.png", p:"fh-arrowvine", s:1381, e:1382, max: 2 },
-        "h2": { group: "herbs", label: "도끼견과", icon: iconBase + "fh-axenut-bw-icon.png", p:"fh-axenut", s:1383, e:1384, max: 2 },
+        "h2": { group: "herbs", label: "도끼토리", icon: iconBase + "fh-axenut-bw-icon.png", p:"fh-axenut", s:1383, e:1384, max: 2 },
         "h3": { group: "herbs", label: "시체버섯", icon: iconBase + "fh-corpsecap-bw-icon.png", p:"fh-corpsecap", s:1385, e:1386, max: 2 },
         "h4": { group: "herbs", label: "화염열매", icon: iconBase + "fh-flamefruit-bw-icon.png", p:"fh-flamefruit", s:1387, e:1388, max: 2 },
         "h5": { group: "herbs", label: "바위뿌리", icon: iconBase + "fh-rockroot-bw-icon.png", p:"fh-rockroot", s:1389, e:1390, max: 2 },
@@ -382,6 +386,7 @@ createFlakes();
         assignArea.innerHTML = "";
         party.forEach(p => { assignArea.innerHTML += `<button class="btn btn-name" onclick="assignTo('${p.name}')">${p.name}</button>`; });
         assignArea.innerHTML += `<button class="btn btn-monster" style="grid-column: span ${party.length};" onclick="assignToMonster()">💀 몬스터가 노획 (제거)</button>`;
+        assignArea.innerHTML += `<button class="btn btn-monster" style="grid-column: span ${party.length}; background: linear-gradient(135deg, #334155, #1e293b); box-shadow: 0 4px 0 #0f172a;" onclick="cancelDraw()">↩️ 드로우 취소 (덱으로 되돌리기)</button>`;
         assignArea.style.gridTemplateColumns = `repeat(${party.length}, 1fr)`;
 
         const logAreaContainer = document.getElementById('log-panel-container');
@@ -469,6 +474,13 @@ createFlakes();
         document.getElementById('assign-area').style.visibility='visible'; 
         document.getElementById('draw-btn').disabled=true; 
         updateUI();
+    }
+
+    function cancelDraw() {
+        if(!currentResult) return;
+        masterDeck.push(currentResult);
+        shuffle(masterDeck);
+        finishAssign();
     }
 
     function assignTo(n) {
@@ -566,7 +578,21 @@ createFlakes();
     }
 
     function closeDiscardModal() { document.getElementById('discard-modal').style.display = 'none'; }
-    function updateUI() { document.getElementById('deck-info').innerText = `남은 카드: ${masterDeck.length}`; }
+    function updateUI() {
+        document.getElementById('deck-info').innerText = `남은 카드: ${masterDeck.length}`;
+        renderDeckPreview();
+    }
+
+    function renderDeckPreview() {
+        const preview = document.getElementById('deck-preview');
+        if(!preview) return;
+        let counts = {};
+        masterDeck.forEach(c => { counts[c.type] = (counts[c.type] || 0) + 1; });
+        preview.innerHTML = Object.keys(itemConfig)
+            .filter(t => counts[t])
+            .map(t => `<div class="deck-chip"><img src="${itemConfig[t].icon}">${itemConfig[t].label} x${counts[t]}</div>`)
+            .join('');
+    }
 
     function openSettlement() {
         document.getElementById('settlement-modal').style.display = 'flex';
