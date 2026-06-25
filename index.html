@@ -143,10 +143,10 @@
 </div>
 
 <div id="discard-modal" class="modal" style="z-index: 200;">
-    <div class="modal-content" style="max-width: 400px; text-align: center; padding: 25px;">
+    <div class="modal-content" style="max-width: 460px; text-align: center; padding: 25px;">
         <div class="close-x" onclick="closeDiscardModal()">✕</div>
         <h3 id="discard-title" style="color:var(--accent); margin-top:0; margin-bottom: 20px;">카드 버리기</h3>
-        <p style="font-size:13px; color:#94a3b8; margin-bottom:15px;">실수로 획득했거나 버려야 할 카드를 선택하세요.</p>
+        <p style="font-size:13px; color:#94a3b8; margin-bottom:15px;">덱으로 되돌리면 셔플되고, 버리면 완전히 폐기됩니다.</p>
         <div id="discard-list" style="display:flex; flex-direction:column; gap:12px; max-height: 50vh; overflow-y: auto;"></div>
     </div>
 </div>
@@ -262,6 +262,7 @@ createFlakes();
 
     let masterDeck = []; let currentResult = null; let cardIdCounter = 0; 
     let logs = {};
+    const MONSTER_KEY = '__MONSTER__';
 
     const baseUrl = "https://raw.githubusercontent.com/any2cards/worldhaven/master/images/loot-deck/frosthaven/";
     const iconBase = "https://raw.githubusercontent.com/any2cards/worldhaven/master/images/art/frosthaven/icons/loot/";
@@ -300,6 +301,7 @@ createFlakes();
     // --- 파티 시스템 ---
     function initPartyLogs() {
         party.forEach(p => { if (!logs[p.name]) logs[p.name] = []; });
+        if (!logs[MONSTER_KEY]) logs[MONSTER_KEY] = [];
     }
 
     let currentSelectingIndex = -1;
@@ -397,12 +399,22 @@ createFlakes();
             `;
         });
         logAreaContainer.innerHTML += `
+            <div class="player-box" style="padding-left:20px; border-color: var(--fail); background: rgba(60, 10, 10, 0.4);">
+                <div class="player-header">
+                    <div class="class-icon-circle" style="border-color: var(--fail); font-size:20px;">💀</div>
+                    <div class="name-tag" style="color:#fca5a5;">몬스터 노획</div>
+                </div>
+                <div id="log-${MONSTER_KEY}" class="summary-container"></div>
+            </div>
+        `;
+        logAreaContainer.innerHTML += `
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:5px;">
                 <button class="btn btn-finish" onclick="openSettlement()">🏁 시나리오 완료</button>
                 <button class="btn btn-name" style="background:#0f172a; box-shadow:none; border:1px solid #1e293b;" onclick="location.reload()">처음으로</button>
             </div>
         `;
         party.forEach(p => renderLogs(p.name));
+        renderLogs(MONSTER_KEY);
     }
     // --- 파티 시스템 종료 ---
 
@@ -468,6 +480,8 @@ createFlakes();
 
     function assignToMonster() {
         if(!currentResult) return;
+        logs[MONSTER_KEY].push({ ...currentResult, uid: cardIdCounter++ });
+        renderLogs(MONSTER_KEY);
         finishAssign();
     }
 
@@ -497,7 +511,8 @@ createFlakes();
     function openDiscardModal(playerName, type) {
         const modal = document.getElementById('discard-modal');
         const list = document.getElementById('discard-list');
-        document.getElementById('discard-title').innerText = `${playerName}님의 ${itemConfig[type].label} 확인/버리기`;
+        const titleName = playerName === MONSTER_KEY ? '몬스터가 노획한' : `${playerName}님의`;
+        document.getElementById('discard-title').innerText = `${titleName} ${itemConfig[type].label} 확인/관리`;
         list.innerHTML = "";
         
         const cards = (logs[playerName] || []).filter(c => c.type === type);
@@ -513,11 +528,30 @@ createFlakes();
                             <div style="font-size:12px; color:#94a3b8;">${card.amount}개 짜리 카드</div>
                         </div>
                     </div>
-                    <button class="btn" style="width:auto; padding:10px 15px; background:var(--fail); font-size:14px; border-radius:10px;" onclick="removeCard('${playerName}', ${card.uid})">버리기</button>
+                    <div style="display:flex; gap:6px; flex-shrink:0;">
+                        <button class="btn" style="width:auto; padding:10px 12px; background:var(--accent); color:#020617; font-size:13px; border-radius:10px;" onclick="returnCard('${playerName}', ${card.uid})">덱으로↩</button>
+                        <button class="btn" style="width:auto; padding:10px 12px; background:var(--fail); font-size:13px; border-radius:10px;" onclick="removeCard('${playerName}', ${card.uid})">버리기</button>
+                    </div>
                 </div>
             `;
         });
         modal.style.display = 'flex';
+    }
+
+    function returnCard(playerName, uid) {
+        if(confirm('해당 카드를 덱으로 되돌리고 다시 셔플하시겠습니까?')) {
+            const idx = (logs[playerName] || []).findIndex(c => c.uid === uid);
+            if(idx === -1) return;
+            const [card] = logs[playerName].splice(idx, 1);
+            masterDeck.push({ type: card.type, img: card.img, amount: card.amount });
+            shuffle(masterDeck);
+            closeDiscardModal();
+            renderLogs(playerName);
+            updateUI();
+            if(document.getElementById('settlement-modal').style.display === 'flex') {
+                openSettlement();
+            }
+        }
     }
 
     function removeCard(playerName, uid) {
